@@ -1,0 +1,91 @@
+@startuml
+
+title Time Tracker Sequence diagram
+skinparam sequenceMessageAlign center
+
+actor user #Black
+
+participant login #LightGreen
+participant signup #LightGreen
+participant homePage #Coral
+participant server #Orchid
+participant dataBase #Cyan
+
+activate user #SkyBlue
+
+' Login
+activate login #LightGreen
+user -> login : Enter username and password
+login -> user :  Invalid credentials
+activate homePage #Coral
+login -> homePage : Upon successfull login
+deactivate login
+
+' Signup
+activate signup #LightGreen
+user -> signup : Enter username and password details
+signup -> homePage : Upon signup
+deactivate signup
+
+' Create a time entry
+user -> homePage : Enter time details
+activate server #Orchid
+homePage -> server : Send time details
+activate dataBase #Cyan
+server -> dataBase : Create a time entry
+
+dataBase -> server : Created successfully
+server -> homePage : Created successfully
+homePage -> user : Created successfully
+
+' Delete a time entry
+user -> homePage : Delete a time entry
+homePage -> server : Send entry's unique id
+server -> dataBase : Delete the time details
+
+dataBase -> server : Deleted successfully
+server -> homePage : Deleted successfully
+homePage -> user : Deleted successfully
+
+' Edit a time entry
+user -> homePage : Edit a time entry
+homePage -> server : Send entry's unique id
+server -> dataBase : Edit the time details
+
+dataBase -> server : Edited successfully
+server -> homePage : Edited successfully
+homePage -> user : Edited successfully
+
+' Get entries filtered by date
+user -> homePage : Request for entries for specific date
+homePage -> server : Send specific date
+server -> dataBase : Serve the request and send the date
+
+dataBase -> server : Return the entries data
+server -> homePage : Return the entries data
+homePage -> user : Shows the entries data
+
+' Get entries filtered by particular month
+user -> homePage : Request for entries for specific month
+homePage -> server : Send specific month
+server -> dataBase : Serve the request and send the month
+
+dataBase -> server : Return the entries data
+server -> homePage : Return the entries data
+homePage -> user : Shows the entries data
+
+' Get entries filtered by particular week
+user -> homePage : Request for entries for specific week
+homePage -> server : Send specific week index
+server -> dataBase : Serve the request and send the week index
+
+dataBase -> server : Return the entries data
+deactivate dataBase
+server -> homePage : Return the entries data
+deactivate server
+homePage -> user : Shows the entries data
+
+deactivate homePage
+deactivate user
+
+@enduml
