@@ -1,0 +1,7 @@
+export const loginSelect = document.getElementById('login-select')
+export const signupSelect = document.getElementById('signup-select')
+export const loginDetails = document.getElementById('login-details')
+export const signupDetails = document.getElementById('signup-details')
+export const signupForm = document.getElementById('signup-form')
+export const signupPassword = document.getElementById('signup-password')
+export const confirmPassword = document.getElementById('confirm-password')
