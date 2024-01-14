@@ -1,23 +1,20 @@
 const fs = require('fs')
 const path = require('path')
+const addEntryHandlers = require('./add-entry-handlers.cjs')
+
 let usersFilePath = path.resolve(__dirname,'../../utils/data-storage-files/users.json')
 
 /**
- * Verify login by checking user details exists in users data
- * @param {string} email - E mail ID of the user
- * @param {string} password - respective password
- * @returns promise that resolves to login successfull or not
+ * The authenticate user login from file
+ * @param {string} email - E mail of the user
+ * @param {string} password - password of the user
+ * @returns promise that resolves on successfull login
  */
 const authenticateLogin = function (email,password){
     let usersData 
     let promise = new Promise((resolve,reject)=>{
         fs.readFile(usersFilePath,(err,data)=>{
-            try{
-                usersData = JSON.parse(data)
-            }
-            catch(err){
-                usersData = {}
-            }
+            usersData = JSON.parse(data)
             if(email in usersData){
                 if(usersData[email]["password"] == password){
                     resolve("User exists and authenticated")
@@ -35,9 +32,9 @@ const authenticateLogin = function (email,password){
 }
 
 /**
- * Add a new user in users data
- * @param {object} query - user details 
- * @returns promise that resolves to successfull signup
+ * Adds a new user upon signup
+ * @param {object} query - user details for signup
+ * @returns promise that resolves on successfull addition to file
  */
 const addNewUser = function (query){
     let statusMessage
@@ -49,18 +46,12 @@ const addNewUser = function (query){
                 statusMessage = "Cannot read file"
                 resolve(statusMessage)
             }
-            try{
-                usersData = JSON.parse(data)
-            }
-            catch(err){
-                usersData = {}
-            }
+            usersData = JSON.parse(data)
             if(!usersData.hasOwnProperty(query.email)){
                 usersData[query.email] = {}
                 usersData[query.email]["email"] = query.email
                 usersData[query.email]["username"] = query.username
                 usersData[query.email]["password"] = query.password
-                console.log(usersData);
                 fs.writeFile(usersFilePath,JSON.stringify(usersData),(err)=>{
                     if(err){
                         console.log("Couldn't write to users.json file");
@@ -83,5 +74,5 @@ const addNewUser = function (query){
 
 module.exports = {
     authenticateLogin ,
-    addNewUser
+    addNewUser 
 }
