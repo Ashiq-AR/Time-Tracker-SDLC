@@ -189,29 +189,31 @@ export const displayManualEntryForm = function(){
         <input type="date" name="date" id="date">
         <div class="times-container">
             <div class="time-entry-container">
-                <label for="duration">Duration: </label>
-                <div id="duration-block" class="flex-center">
-                    <input type="number" name="duration-hours" id="duration-hours" min="0" max="23">
-                    <span>:</span>
-                    <input type="number" name="duration-minutes" id="duration-minutes" min="0" max="59">
-                    <span>:</span>
-                    <input type="number" name="duration-seconds" id="duration-seconds" min="0" max="59">
-                </div>
                 <label for="start-time-block">Start: </label>
                 <div id="start-time-block" class="flex-center">
-                    <input type="number" name="start-time-hours" id="start-time-hours" min="0" max="23">
+                    <input type="number" name="start-time-hours" id="start-time-hours" min="1" max="12">
                     <span>:</span>
                     <input type="number" name="start-time-minutes" id="start-time-minutes" min="0" max="59">
                     <span>:</span>
                     <input type="number" name="start-time-seconds" id="start-time-seconds" min="0" max="59">
+                    <span>:</span>
+                    <select name="start-time-meridiam" id="start-time-meridiam">
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
                 </div>
                 <label for="stop-time-block">End: </label>
                 <div id="stop-time-block" class="flex-center">
-                    <input type="number" name="stop-time-hours" id="stop-time-hours" min="0" max="23">
+                    <input type="number" name="stop-time-hours" id="stop-time-hours" min="1" max="12">
                     <span>:</span>
                     <input type="number" name="stop-time-minutes" id="stop-time-minutes" min="0" max="59">
                     <span>:</span>
                     <input type="number" name="stop-time-seconds" id="stop-time-seconds" min="0" max="59">
+                    <span>:</span>
+                    <select name="stop-time-meridiam" id="stop-time-meridiam">
+                        <option value="AM">AM</option>
+                        <option value="PM">PM</option>
+                    </select>
                 </div>
             </div>
             <div>
@@ -220,19 +222,29 @@ export const displayManualEntryForm = function(){
                     <div class="flex-center time-entry-container">
                         <label for="from">From:</label>
                         <div id="start-time-stamp-block" class="flex-center">
-                            <input type="number" name="start-time-stamp-hours" id="start-time-stamp-hours" min="0" max="23">
+                            <input type="number" name="start-time-stamp-hours" class="start-time-stamp-hours" min="1" max="12">
                             <span>:</span>
-                            <input type="number" name="start-time-stamp-minutes" id="start-time-stamp-minutes" min="0" max="59">
+                            <input type="number" name="start-time-stamp-minutes" class="start-time-stamp-minutes" min="0" max="59">
                             <span>:</span>
-                            <input type="number" name="start-time-stamp-seconds" id="start-time-stamp-seconds" min="0" max="59">
+                            <input type="number" name="start-time-stamp-seconds" class="start-time-stamp-seconds" min="0" max="59">
+                            <span>:</span>
+                            <select name="start-time-stamp-meridiam" class="start-time-stamp-meridiam">
+                                <option value="AM">AM</option>
+                                <option value="PM">PM</option>
+                            </select>
                         </div>
                         <label for="to">To:</label>
                         <div id="stop-time-stamp-block" class="flex-center">
-                            <input type="number" name="stop-time-stamp-hours" id="stop-time-stamp-hours" min="0" max="23">
+                            <input type="number" name="stop-time-stamp-hours" class="stop-time-stamp-hours" min="1" max="12">
                             <span>:</span>
-                            <input type="number" name="stop-time-stamp-minutes" id="stop-time-stamp-minutes" min="0" max="59">
+                            <input type="number" name="stop-time-stamp-minutes" class="stop-time-stamp-minutes" min="0" max="59">
                             <span>:</span>
-                            <input type="number" name="stop-time-stamp-seconds" id="stop-time-stamp-seconds" min="0" max="59">
+                            <input type="number" name="stop-time-stamp-seconds" class="stop-time-stamp-seconds" min="0" max="59">
+                            <span>:</span>
+                            <select name="stop-time-stamp-meridiam" class="stop-time-stamp-meridiam">
+                                <option value="AM">AM</option>
+                                <option value="PM">PM</option>
+                            </select>
                         </div>
                         <img src="/assets/images/delete-button.svg" class="delete-time-stamp" alt="delete" width="20px">
                     </div>
@@ -244,7 +256,7 @@ export const displayManualEntryForm = function(){
         </div>
         <div id="submit-details" class="button">ADD</div>
     </form>`
-    showPopup(section)
+    return showPopup(section)
 }
 
 /**
@@ -255,20 +267,30 @@ export const addTimeStampInUiForm = function(){
     timeStamp.classList.add("flex-center","time-entry-container")
     const timeStampTemplate = `
     <label for="from">From:</label>
-    <div id="stop-time-block" class="flex-center">
-        <input type="number" name="stop-time-hours" id="stop-time-hours" min="0" max="23">
+    <div id="start-time-stamp-block" class="flex-center">
+        <input type="number" name="start-time-stamp-hours" class="start-time-stamp-hours" min="1" max="12">
         <span>:</span>
-        <input type="number" name="stop-time-minutes" id="stop-time-minutes" min="0" max="59">
+        <input type="number" name="start-time-stamp-minutes" class="start-time-stamp-minutes" min="0" max="59">
         <span>:</span>
-        <input type="number" name="stop-time-seconds" id="stop-time-seconds" min="0" max="59">
+        <input type="number" name="start-time-stamp-seconds" class="start-time-stamp-seconds" min="0" max="59">
+        <span>:</span>
+        <select name="start-time-stamp-meridiam" class="start-time-stamp-meridiam">
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+        </select>
     </div>
     <label for="to">To:</label>
-    <div id="stop-time-block" class="flex-center">
-        <input type="number" name="stop-time-hours" id="stop-time-hours" min="0" max="23">
+    <div id="stop-time-stamp-block" class="flex-center">
+        <input type="number" name="stop-time-stamp-hours" class="stop-time-stamp-hours" min="1" max="12">
         <span>:</span>
-        <input type="number" name="stop-time-minutes" id="stop-time-minutes" min="0" max="59">
+        <input type="number" name="stop-time-stamp-minutes" class="stop-time-stamp-minutes" min="0" max="59">
         <span>:</span>
-        <input type="number" name="stop-time-seconds" id="stop-time-seconds" min="0" max="59">
+        <input type="number" name="stop-time-stamp-seconds" class="stop-time-stamp-seconds" min="0" max="59">
+        <span>:</span>
+        <select name="stop-time-stamp-meridiam" class="stop-time-stamp-meridiam">
+            <option value="AM">AM</option>
+            <option value="PM">PM</option>
+        </select>
     </div>
     <img src="/assets/images/delete-button.svg" class="delete-time-stamp" alt="delete" width="20px">`
     timeStamp.innerHTML = timeStampTemplate

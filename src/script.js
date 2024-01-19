@@ -4,6 +4,7 @@ import * as addEntryHandlers from './js-files/add-entry-handlers.js'
 import * as unitFunctions from './js-files/unit-functions.js'
 import * as updateEntryHandlers from './js-files/update-entry-handlers.js'
 import * as timerHandlers from './js-files/timer-handlers.js'
+import * as timeHandlers from './js-files/time-handlers.js'
 
 let details = {}
 let timerStatus = 'stopped'
@@ -25,9 +26,8 @@ domUtils.addDetails.onclick = function (){
         details = addEntryHandlers.getDetails()
         details["email"] = getEmailOfUser()
         details['date'] = dateObj.getDate()
-        details['month'] = parseInt(dateObj.getMonth()) + 1
+        details['month'] = unitFunctions.paddZeroIfSingleDigit(parseInt(dateObj.getMonth()) + 1)
         details['year'] = dateObj.getFullYear()
-        console.log(details);
         uiManipulators.cancelPopup(form)
         entryId = await addEntryHandlers.addEntryDetailsInFile(details)
         if(entryId){
@@ -122,7 +122,6 @@ const runTimer = function (){
  */
 const getEmailOfUser = function(){
     let email = window.location.search.slice(7)
-    console.log(email);
     return email
 }
 
@@ -130,13 +129,68 @@ const getEmailOfUser = function(){
  * Show details to add manual entry
  */
 domUtils.addManualEntry.onclick = function(){
-    uiManipulators.displayManualEntryForm()
+    const form = uiManipulators.displayManualEntryForm()
     document.getElementById('add-time-stamp').onclick = function(){
         uiManipulators.addTimeStampInUiForm()
         for(const deleteTimeStamp of document.getElementsByClassName("delete-time-stamp")){
             deleteTimeStamp.onclick = function(event){
                 uiManipulators.deleteElementInUi(event.target.parentNode)
             }
+        }
+    }
+    document.getElementById("submit-details").onclick = async function(){
+        let entryDetails,startTime,stopTime,duration,isStartTimeLess
+        const details = addEntryHandlers.getDetails()
+        let fullDate
+        if(document.getElementById("date").value == ''){
+            let dateObj = new Date()
+            fullDate = unitFunctions.formatDate(dateObj.getDate(),parseInt(dateObj.getMonth())+1,dateObj.getFullYear()).split('/')
+            fullDate.reverse()
+        }
+        else {
+            fullDate = document.getElementById("date").value.split('-')
+        }
+        startTime = timeHandlers.getFormatedTimeFromManualEntryForm("start-time")
+        stopTime = timeHandlers.getFormatedTimeFromManualEntryForm("stop-time")
+        if(unitFunctions.validateGreaterTime(timeHandlers.separateHrsMinsSecsFromFormatedTime(startTime),timeHandlers.separateHrsMinsSecsFromFormatedTime(stopTime))){
+            const numberOfTimeStamps = document.getElementById('time-stamps-container').children.length
+            for(let i=0;i<numberOfTimeStamps;i++){
+                let hours = document.getElementsByClassName('start-time-stamp-hours')[i].value
+                let minutes = document.getElementsByClassName('start-time-stamp-minutes')[i].value
+                let seconds = document.getElementsByClassName('start-time-stamp-seconds')[i].value
+                let meridiam = document.getElementsByClassName('start-time-stamp-meridiam')[i].value
+                let startTime = unitFunctions.formatTime(hours,minutes,seconds,meridiam)
+                hours = document.getElementsByClassName('stop-time-stamp-hours')[i].value
+                minutes = document.getElementsByClassName('stop-time-stamp-minutes')[i].value
+                seconds = document.getElementsByClassName('stop-time-stamp-seconds')[i].value
+                meridiam = document.getElementsByClassName('stop-time-stamp-meridiam')[i].value
+                let stopTime = unitFunctions.formatTime(hours,minutes,seconds,meridiam)
+                if(unitFunctions.validateGreaterTime(timeHandlers.separateHrsMinsSecsFromFormatedTime(startTime),timeHandlers.separateHrsMinsSecsFromFormatedTime(stopTime))){
+                        isStartTimeLess = true
+                }
+                else{
+                    alert("Make sure start time is less than end time in all time stamps")
+                    isStartTimeLess = false
+                    break
+                }
+            }
+            details["email"] = getEmailOfUser()
+            details["date"] = fullDate[2]
+            details["month"] = fullDate[1]
+            details["year"] = fullDate[0]
+            entryDetails = await addEntryHandlers.addEntryDetailsInFile(details)
+            duration = timeHandlers.calculateDurationFromStartEndTime(startTime,stopTime)
+            await updateEntryHandlers.updateDetail("duration",entryDetails,duration)
+            await addEntryHandlers.addStartTimeForEntry(entryDetails,startTime)
+            await addEntryHandlers.addStopTimeForEntry(entryDetails,stopTime)
+            if(isStartTimeLess){
+                await addEntryHandlers.addTimeStamp(entryDetails,"start",startTime)
+                await addEntryHandlers.addTimeStamp(entryDetails,"end",stopTime)
+            }
+            uiManipulators.cancelPopup(form)
+        }
+        else{
+            alert('Start time is greater than or equal to end time')
         }
     }
 }

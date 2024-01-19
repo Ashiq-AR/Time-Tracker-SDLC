@@ -93,3 +93,47 @@ export const getLastElementOfAnIterator = function(iterator){
 export const capitalize = function(string){
     return string.charAt(0).toUpperCase()+string.slice(1)
 }
+
+/**
+ * Returns the time in user readable formate
+ * @param {number} hours - hours
+ * @param {number} minutes - minutes
+ * @param {number} seconds - seconds
+ * @param {string} meridiam - meridiam of the time
+ * @returns the formated time
+ */
+export const formatTime = function(hours,minutes,seconds,meridiam){
+    hours = paddZeroIfSingleDigit(hours)
+    minutes = paddZeroIfSingleDigit(minutes)
+    seconds = paddZeroIfSingleDigit(seconds)
+    if(meridiam){
+        return hours+":"+minutes+":"+seconds+" "+meridiam
+    }
+    else{
+        return hours+":"+minutes+":"+seconds
+    }
+}
+
+/**
+ * Checks and returns true if given end time is greater than start time
+ * @param {object} startTime - start time of an entry
+ * @param {object} endTime - end time of an entry
+ * @returns true if end time is greater than start time
+ */
+export const validateGreaterTime = function(startTime,endTime){
+    if(startTime.meridiam == endTime.meridiam){
+        const start = [startTime.hrs,startTime.mins,startTime.secs]
+        const end = [endTime.hrs,endTime.mins,endTime.secs]
+        for(let i=0;i<3;i++){
+            if(start[i]<=end[i]){
+                if(start[i]==end[i]){
+                    continue
+                }
+                else return true
+            }
+            else return false
+        }
+        return false
+    }
+    else return true
+}

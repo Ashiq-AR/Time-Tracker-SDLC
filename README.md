@@ -19,6 +19,6 @@ Move to the folder by ,
 
 Now run the server ,
 
-    node src/server/server.cjs
+    npm run server
 
 Now , open the [local port:3000](http://localhost:3000/) in the browser to see the running application.

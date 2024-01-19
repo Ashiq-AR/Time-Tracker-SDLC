@@ -7,11 +7,9 @@ export const getDetails = function(){
     let taskNameInput = document.getElementById('task-name-input')
     let taskDescriptionInput = document.getElementById('task-description-input')
     let categoryInput = document.getElementById('category-input')
-    if(validateFormDetailsNotEmpty(taskNameInput.value,taskDescriptionInput.value,categoryInput.value)){
-        details["taskName"] = taskNameInput.value
-        details["taskDescription"] = taskDescriptionInput.value
-        details["category"] = categoryInput.value
-    }
+    details["taskName"] = taskNameInput.value
+    details["taskDescription"] = taskDescriptionInput.value
+    details["category"] = categoryInput.value
     return details
 }
 

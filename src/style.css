@@ -138,7 +138,7 @@ input , label {
     border-radius: 10px;
     border: 3px solid black;
     padding: 1rem;
-    width: clamp(18rem , 100% , 44rem);
+    width: clamp(18rem , 100% , 48rem);
     margin: auto;
 }
 

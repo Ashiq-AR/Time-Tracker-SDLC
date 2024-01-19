@@ -66,3 +66,31 @@ test('Test the function capitalizes the given string',()=>{
     expect(unitFunctions.capitalize('ashiq rahman')).toBe("Ashiq rahman")
     expect(unitFunctions.capitalize("123")).toBe("123")
 })
+
+test('Test the function returns proper formated time for given time params',()=>{
+    expect(unitFunctions.formatTime(12,12,12,"PM")).toBe('12:12:12 PM')
+    expect(unitFunctions.formatTime(2,2,0,"am")).toBe('02:02:00 am')
+    expect(unitFunctions.formatTime(2,2)).toBe('02:02:undefined')
+    expect(unitFunctions.formatTime(2,2,2,2)).toBe('02:02:02 2')
+
+})
+
+test('Test the function returns true if end time more than start time else false',()=>{
+    expect(unitFunctions.validateGreaterTime(
+        {hrs:12,mins:12,secs:12,meridiam:"AM"},
+        {hrs:12,mins:12,secs:13,meridiam:"AM"}
+    )).toBeTruthy()
+    expect(unitFunctions.validateGreaterTime(
+        {hrs:12,mins:12,secs:12,meridiam:"AM"},
+        {hrs:12,mins:12,secs:13,meridiam:"PM"}
+    )).toBeTruthy()
+    expect(unitFunctions.validateGreaterTime(
+        {hrs:12,mins:12,secs:12,meridiam:"PM"},
+        {hrs:12,mins:12,secs:12,meridiam:"PM"}
+    )).toBeFalsy()
+    expect(unitFunctions.validateGreaterTime(
+        {hrs:1,mins:2,secs:12,meridiam:"PM"},
+        {hrs:12,mins:12,secs:1,meridiam:"PM"}
+    )).toBeTruthy()
+    
+})
