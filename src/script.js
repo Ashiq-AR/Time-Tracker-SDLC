@@ -1,3 +1,4 @@
+import { getEmailOfUser } from './js-files/user-handlers.js'
 import * as domUtils from './utils/dom-utils.js'
 import * as uiManipulators from './js-files/ui-manipulators.js'
 import * as addEntryHandlers from './js-files/add-entry-handlers.js'
@@ -5,6 +6,8 @@ import * as unitFunctions from './js-files/unit-functions.js'
 import * as updateEntryHandlers from './js-files/update-entry-handlers.js'
 import * as timerHandlers from './js-files/timer-handlers.js'
 import * as timeHandlers from './js-files/time-handlers.js'
+import * as filterEntryHandlers from './js-files/filter-entry-handlers.js'
+
 
 let details = {}
 let timerStatus = 'stopped'
@@ -31,7 +34,11 @@ domUtils.addDetails.onclick = function (){
         uiManipulators.cancelPopup(form)
         entryId = await addEntryHandlers.addEntryDetailsInFile(details)
         if(entryId){
-            uiManipulators.addEntryInUi(details.taskName,details.taskDescription,details.category,"--:--:--","--:--:--","--:--:--",unitFunctions.formatDate(details["date"],details["month"],details["year"]))
+            if(timeHandlers.checkIfToAddCurrentEntryInUi(details['date'])) {
+                uiManipulators.clearTimeEntriesContainer()
+                uiManipulators.addEntryInUi(details.taskName || '--',details.taskDescription || '--',details.category || '--',"--:--:--","--:--:--","--:--:--",unitFunctions.formatDate(details["date"],details["month"],details["year"]))
+
+            }
             uiManipulators.addTaskDescriptionPopUpOnClick()
             isAddedDetails = true
         }
@@ -50,7 +57,7 @@ domUtils.startTimer.onclick = async function (){
             let time = unitFunctions.militaryTimeToMeridiamTime(date.getHours(),date.getMinutes(),date.getSeconds())
             if(isStart){
                 await addEntryHandlers.addStartTimeForEntry(entryId,time)
-                unitFunctions.getLastElementOfAnIterator(domUtils.start).innerHTML = time
+                if(timeHandlers.checkIfToAddCurrentEntryInUi(date.getDate())) unitFunctions.getLastElementOfAnIterator(domUtils.start).innerHTML = time
                 isStart = false
             }
             await addEntryHandlers.addTimeStamp(entryId,"start",time)
@@ -91,19 +98,20 @@ domUtils.stopTimer.onclick = async  function (){
             await addEntryHandlers.addTimeStamp(entryId,"end",time)
         }
         await updateEntryHandlers.updateDetail("duration",entryId,formatedDuration)
-        unitFunctions.getLastElementOfAnIterator(domUtils.totalDuration).innerHTML = formatedDuration
+        if(timeHandlers.checkIfToAddCurrentEntryInUi(date.getDate())) {
+            unitFunctions.getLastElementOfAnIterator(domUtils.totalDuration).innerHTML = formatedDuration
+        }
         duration = 0
         uiManipulators.showRunningTimer(duration)
         clearInterval(runTimerInterval)
         await addEntryHandlers.addStopTimeForEntry(entryId,time)
-        unitFunctions.getLastElementOfAnIterator(domUtils.end).innerHTML = time
+        if(timeHandlers.checkIfToAddCurrentEntryInUi(date.getDate())) unitFunctions.getLastElementOfAnIterator(domUtils.end).innerHTML = time
         isAddedDetails = false
         timerStatus = 'stopped'
         isStart = true
         uiManipulators.showIconOnTimerStatus(timerStatus)
     }
 }
-
 
 /**
  * Runs the timer
@@ -114,15 +122,6 @@ const runTimer = function (){
         duration++
         uiManipulators.showRunningTimer(duration)
     }, 1000);
-}
-
-/**
- * Gives the email of the user from the url query
- * @returns email id of the user
- */
-const getEmailOfUser = function(){
-    let email = window.location.search.slice(7)
-    return email
 }
 
 /**
@@ -192,5 +191,141 @@ domUtils.addManualEntry.onclick = function(){
         else{
             alert('Start time is greater than or equal to end time')
         }
+    }
+}
+
+uiManipulators.changeFilterInputInUi('date')
+domUtils.filterDate.value = timeHandlers.getCurrent('date')
+
+domUtils.filterByCalendar.onchange = async function(){
+    let inputValue
+    const filterBy = domUtils.filterByCalendar.value
+    uiManipulators.changeFilterInputInUi(filterBy)
+    inputValue = timeHandlers.getCurrent(filterBy)
+    document.getElementById(`filter-${filterBy}`).value = inputValue
+    if(filterBy == 'date'){
+        domUtils.filterDate.onchange()
+    }
+    else if(filterBy == 'month'){
+        domUtils.filterMonth.onchange()
+    }
+}
+
+
+
+domUtils.filterDate.onchange = async function(){
+    uiManipulators.clearTimeEntriesContainer()
+    const inputValue = document.getElementById(`filter-date`).value
+    let filteredEntries = await filterEntryHandlers.getEntries('date',inputValue)
+    const categoryFilter = domUtils.filterByCategory.value
+    if(filteredEntries == 'not found'){
+        uiManipulators.displayTimeEntriesNotFound()
+    }
+    else{
+        filteredEntries = filterEntryHandlers.filterByCategory(categoryFilter)
+        if(filteredEntries == 'not found'){
+            uiManipulators.displayTimeEntriesNotFound()
+        }
+        else{
+            for(const entry in filteredEntries){
+                const date = unitFunctions.formatDate(inputValue.split('-')[2],inputValue.split('-')[1],inputValue.split('-')[0])
+                uiManipulators.showTimeEntries(filteredEntries,entry,date)
+            }
+        }
+    }
+}
+
+domUtils.filterDate.onchange()
+
+domUtils.filterMonth.onchange = async function(){
+    uiManipulators.clearTimeEntriesContainer()
+    const inputValue = document.getElementById(`filter-month`).value
+    let filteredEntries = await filterEntryHandlers.getEntries('month',inputValue)
+    const categoryFilter = domUtils.filterByCategory.value
+    if(filteredEntries == 'not found'){
+        uiManipulators.displayTimeEntriesNotFound()
+    }
+    else{
+        filteredEntries = filterEntryHandlers.filterByCategory(categoryFilter)
+        if(filteredEntries == 'not found'){
+            uiManipulators.displayTimeEntriesNotFound()
+        }
+        else{
+            for(const date in filteredEntries){
+                for(const entryId in filteredEntries[date]){
+                    const formatedDate = unitFunctions.formatDate(date,inputValue.split('-')[1],inputValue.split('-')[0])
+                    uiManipulators.showTimeEntries(filteredEntries[date],entryId,formatedDate)
+                }
+            }
+        }
+    }
+}
+
+
+domUtils.prevArrow.onclick = async function(){
+    const filterBy = domUtils.filterByCalendar.value
+    if(filterBy == 'date'){
+        let [year,month,date] = domUtils.filterDate.value.split('-')
+        let prevDate
+        if(parseInt(date) == 1){
+            const dateMonthAndYear = timeHandlers.determineDate(parseInt(date),parseInt(month),parseInt(year),'prev')
+            prevDate = dateMonthAndYear[0]
+            month = dateMonthAndYear[1]
+            year = dateMonthAndYear[2]
+
+        }
+        else{
+            prevDate = parseInt(date)-1
+        }
+        domUtils.filterDate.value = year+'-'+unitFunctions.paddZeroIfSingleDigit(month)+'-'+unitFunctions.paddZeroIfSingleDigit(prevDate)
+        await domUtils.filterDate.onchange()
+    }
+    else if(filterBy == 'month'){
+        let [year,month] = domUtils.filterMonth.value.split('-')
+        const monthAndYear = timeHandlers.getMonthAndRespYear(parseInt(month),parseInt(year),'prev')
+        domUtils.filterMonth.value = monthAndYear[1]+'-'+unitFunctions.paddZeroIfSingleDigit(monthAndYear[0])
+        await domUtils.filterMonth.onchange()
+    }
+}
+
+domUtils.nextArrow.onclick = async function(){
+    const filterBy = domUtils.filterByCalendar.value
+    if(filterBy == 'date'){
+        let [year,month,date] = domUtils.filterDate.value.split('-')
+        let nextDate
+        if(parseInt(month)==2){
+            if(parseInt(date)==28 || parseInt(date)==29){
+                const dateMonthAndYear = timeHandlers.determineDate(parseInt(date),parseInt(month),parseInt(year),'next')
+                nextDate = dateMonthAndYear[0]
+                month = dateMonthAndYear[1]
+                year = dateMonthAndYear[2]
+            }
+            else nextDate = parseInt(date)+1
+        }
+        else if(parseInt(date)==30 || parseInt(date)==31){
+            const dateMonthAndYear = timeHandlers.determineDate(parseInt(date),parseInt(month),parseInt(year),'next')
+            nextDate = dateMonthAndYear[0]
+            month = dateMonthAndYear[1]
+            year = dateMonthAndYear[2]       
+        }
+        else nextDate = parseInt(date)+1
+        domUtils.filterDate.value = year+'-'+unitFunctions.paddZeroIfSingleDigit(month)+'-'+unitFunctions.paddZeroIfSingleDigit(nextDate)
+        await domUtils.filterDate.onchange()
+    }
+    else if(filterBy == 'month'){
+        let [year,month] = domUtils.filterMonth.value.split('-')
+        const monthAndYear = timeHandlers.getMonthAndRespYear(parseInt(month),parseInt(year),'next')
+        domUtils.filterMonth.value = monthAndYear[1]+'-'+unitFunctions.paddZeroIfSingleDigit(monthAndYear[0])
+        await domUtils.filterMonth.onchange()
+    }
+}
+
+domUtils.filterByCategory.onchange = function(){
+    const filterByCalendar = domUtils.filterByCalendar.value
+    if(filterByCalendar == 'date'){
+        domUtils.filterDate.onchange()
+    }
+    else if(filterByCalendar == 'month'){
+        domUtils.filterMonth.onchange()
     }
 }

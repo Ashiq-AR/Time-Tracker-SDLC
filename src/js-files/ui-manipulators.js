@@ -135,7 +135,7 @@ export const addEntryInUi = function (taskName,taskDescription,category,duration
                 <img src="../assets/images/edit.png" alt="edit" id="edit-button" width="20px">
             </div>
         </div>`
-        domUtils.timeEntryContainer.append(entry)
+        domUtils.timeEntriesContainer.append(entry)
 }
 
 /**
@@ -303,4 +303,50 @@ export const addTimeStampInUiForm = function(){
  */
 export const deleteElementInUi = function(element){
     element.remove()
+}
+
+/**
+ * Show an entry with filtered entries object parameters in UI
+ * @param {object} filteredEntries - the filtered time entries
+ * @param {string} entry - the entry's unique id
+ * @param {string} date - the added date of the entry
+ */
+export const showTimeEntries = async function(filteredEntries,entry,date){
+    const taskName = filteredEntries[entry].taskName || "--"
+    const taskDescription = filteredEntries[entry].taskDescription || '--'
+    const duration = filteredEntries[entry].duration || '--:--:--'
+    const category = filteredEntries[entry].category || '--'
+    const startTime = filteredEntries[entry].startTime || '--'
+    const stopTime = filteredEntries[entry].stopTime || '--'
+    date = date || '--'
+    addEntryInUi(taskName,taskDescription,category,duration,startTime,stopTime,date)
+}
+
+/**
+ * Changes the input as date,month and week as per filterBy
+ * @param {string} filterBy - date,month or week
+ */
+export const changeFilterInputInUi = function(filterBy){
+    domUtils.filterDate.classList.add('hide')
+    domUtils.filterWeek.classList.add('hide')
+    domUtils.filterMonth.classList.add('hide')
+    document.getElementById(`filter-${filterBy}`).classList.remove('hide')
+}
+
+/**
+ * Clears the  time entries in the time entries container
+ */
+export const clearTimeEntriesContainer = function(){
+    domUtils.timeEntriesContainer.innerHTML = ``
+}
+
+/**
+ * Displays time entries not found message in time entries container
+ */
+export const displayTimeEntriesNotFound = function(){
+    domUtils.timeEntriesContainer.innerHTML = `
+    <div class='not-found'>
+        <img src="../assets/images/none.png" alt="none" width="50px">
+        <div>No Entries Found</div>
+    </div>`
 }

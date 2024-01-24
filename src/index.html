@@ -16,25 +16,26 @@
     <!-- Change previous and next -->
     <section id="prev-and-next-change-container" class="block-style flex-center">
         <img src="../assets/images/next.png" alt="prev-arrow" id="prev-arrow" class="rotate" width="30px">
-        <!-- <input type="date" name="date" id="filter-date"> -->
-        <!-- <input type="month" name="month" id="filter-month"> -->
+        <input type="date" name="date" id="filter-date">
+        <input type="month" name="month" id="filter-month">
         <input type="week" name="week" id="filter-week">
         <img src="../assets/images/next.png" alt="next-arrow" id="next-arrow" width="30px" >
     </section>
 
     <!-- Filter options -->
     <section id="filter-container" class="block-style flex-center">
-        <div id="filter-by-calendar">
-            <label for="calender">Filter By</label>
-            <select name="calendar" id="calendar">
+        <div>
+            <label for="filter-by-calendar">Filter By</label>
+            <select name="filter-by-calendar" id="filter-by-calendar">
                 <option value="date">Date</option>
                 <option value="week">Week</option>
                 <option value="month">Month</option>
             </select>
         </div>
-        <div id="filter-by-category">
+        <div>
             <label for="category">Filter By</label>
-            <select name="category" id="category">
+            <select name="category" id="filter-by-category">
+                <option value="all">All</option>
                 <option value="work">Work</option>
                 <option value="entertainment">Entertainment</option>
                 <option value="sleep">Sleep</option>

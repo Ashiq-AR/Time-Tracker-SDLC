@@ -37,7 +37,7 @@ export const secondsToMinutes = function(duration){
  * @returns padded format for single digit
  */
 export const paddZeroIfSingleDigit = function(number){
-    return (number < 10) ? '0'+number : number
+    return (number.toString().length < 2) ? '0'+number : number
 }
 
 /**

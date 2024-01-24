@@ -3,6 +3,7 @@ const path = require('path')
 const loginSignupHandlers = require('./server-side-scripts/login-signup-handlers.cjs')
 const addEntryHandlers = require('./server-side-scripts/add-entry-handlers.cjs')
 const updateEntryHandlers = require('./server-side-scripts/update-entry-handlers.cjs')
+const filterEntryHandlers = require('./server-side-scripts/filter-entry-handlers.cjs')
 
 const app = express()
 const port = 3000
@@ -111,6 +112,27 @@ app.post('/update-detail', async (req,res)=>{
     let entryDetails = req.body
     await updateEntryHandlers.updateDetail(entryDetails.detail,entryDetails)
     res.status(200).send("successfull")
+})
+
+/**
+ * Handle requests to get time enties based on time value
+ */
+app.post('/get-by-date', async (req,res)=>{
+    let query = req.body
+    // const filteredEntries = fs.readFileSync(path.resolve(__dirname,'../utils/data-storage-files/time-entries.json'))
+    let filteredEntries = filterEntryHandlers.getEntriesForDate(query)
+    if(filteredEntries == undefined) filteredEntries = 'not found'
+    res.status(200).json(filteredEntries)
+})
+
+/**
+ * Handle requests to get time entries based on month input
+ */
+app.post('/get-by-month', async (req,res)=>{
+    let query = req.body
+    let filteredEntries = await filterEntryHandlers.getEntriesForMonth(query)
+    if(filteredEntries == undefined) filteredEntries = 'not found'
+    res.status(200).json(filteredEntries)
 })
 
 /**
