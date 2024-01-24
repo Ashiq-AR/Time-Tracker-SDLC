@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login/SignUp</title>
+    <link rel="stylesheet" href="./login-signup.css">
+    <script type="module" src="./login-signup.js"></script>
+</head>
+<body>
+    <section>
+        <!-- Login Signup switch buttons -->
+        <div id="login-select" class="button">LOG IN</div>
+        <div id="signup-select" class="button">SIGN UP</div>
+
+        <!-- Login form -->
+        <div id="login-details">
+            <form action="/login" method="post" class="details">
+                <div>
+                    <div id="email-id-container">
+                        <label for="email-id">Email Id</label>
+                        <input type="email" name="email" id="login-email-id" placeholder="Enter your email id" required>
+                    </div>
+                    <div id="password-container">
+                        <label for="password">Password</label>
+                        <input type="password" name="password" id="login-password" placeholder="Enter your password" required>
+                    </div>
+                </div>
+                <button type="submit" class="button">LOG IN</button>
+            </form>
+        </div>
+
+        <!-- Signup form -->
+        <div id="signup-details">
+            <form action="/signup" method="post" id="signup-form" class="details">
+                <div id="username-container">
+                    <label for="username">Username</label>
+                    <input type="text" name="username" id="username" placeholder="Enter your name" required>
+                </div>
+                <div id="email-id-container">
+                    <label for="email-id">Email Id</label>
+                    <input type="email" name="email" id="signup-email-id" placeholder="Enter your email id" required>
+                </div>
+                <div id="password-container">
+                    <label for="password">Password</label>
+                    <input type="password" name="password" id="signup-password" placeholder="Enter your password" required>
+                </div>
+                <div id="confirm-password-container">
+                    <label for="confirm-password">Confirm Password</label>
+                    <input type="password" name="confirm-password" id="confirm-password" placeholder="Enter your password again" required>
+                </div>
+                <button type="submit" class="button">SIGN UP</button>
+            </form>
+        </div>
+    </section>
+</body>
+</html>

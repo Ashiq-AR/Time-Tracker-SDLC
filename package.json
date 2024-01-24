@@ -1,0 +1,29 @@
+{
+  "name": "time-tracker-sdlc",
+  "version": "1.0.0",
+  "description": "The application where you can track, manage and analyze the time that you have tracked throughout.",
+  "main": "script.js",
+  "type": "module",
+  "scripts": {
+    "test": "node --experimental-vm-modules node_modules/jest/bin/jest.js" ,
+    "server" : "npx nodemon src/server/server.cjs"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Ashiq-AR/Time-Tracker-SDLC.git"
+  },
+  "author": "Ashiq",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Ashiq-AR/Time-Tracker-SDLC/issues"
+  },
+  "homepage": "https://github.com/Ashiq-AR/Time-Tracker-SDLC#readme",
+  "dependencies": {
+    "express": "^4.18.2",
+    "nodemon": "^3.0.2",
+    "uuid": "^9.0.1"
+  },
+  "devDependencies": {
+    "jest": "^29.7.0"
+  }
+}

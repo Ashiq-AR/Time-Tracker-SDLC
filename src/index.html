@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Time Tracker</title>
+    <link rel="stylesheet" href="./style.css">
+    <script type="module" src="./script.js"></script>
+</head>
+<body>
+    <header class="block-style flex-center">
+        <h1>Time Tracker</h1>
+        <div>Have a peacefull and productive day</div>
+    </header>
+
+    <!-- Change previous and next -->
+    <section id="prev-and-next-change-container" class="block-style flex-center">
+        <img src="../assets/images/next.png" alt="prev-arrow" id="prev-arrow" class="rotate" width="30px">
+        <input type="date" name="date" id="filter-date">
+        <input type="month" name="month" id="filter-month">
+        <input type="week" name="week" id="filter-week">
+        <img src="../assets/images/next.png" alt="next-arrow" id="next-arrow" width="30px" >
+    </section>
+
+    <!-- Filter options -->
+    <section id="filter-container" class="block-style flex-center">
+        <div>
+            <label for="filter-by-calendar">Filter By</label>
+            <select name="filter-by-calendar" id="filter-by-calendar">
+                <option value="date">Date</option>
+                <option value="week">Week</option>
+                <option value="month">Month</option>
+            </select>
+        </div>
+        <div>
+            <label for="category">Filter By</label>
+            <select name="category" id="filter-by-category">
+                <option value="all">All</option>
+                <option value="work">Work</option>
+                <option value="entertainment">Entertainment</option>
+                <option value="sleep">Sleep</option>
+                <option value="read">Read</option>
+                <option value="transport">Transport</option>
+            </select>
+        </div>
+    </section>
+
+    <!-- Time entries container -->
+    <section id="time-entries-container" class="time-entries-container">
+        <div class="time-entry block-style">
+            <h3 class="task-name">Task Name</h3>
+            <h3 class="category-title">Category</h3>
+            <h3 class="total-duration-title">Duration</h3>
+            <div class="task-description hide-scrollbar">Lorem ipsum dolor sit amet consectetur, adipisicing elit. Numquam aspernatur, quae, similique eius iste quod suscipit quasi minus quia laborum nobis explicabo nemo ipsum libero. Fuga minus nam ea veritatis</div>
+            <div class="category">Work</div>
+            <div class="total-duration flex-center">00:00:00</div>
+            <div class="start-and-end flex-center">
+                <div>
+                    <div class="start-title">Start</div>
+                    <div class="start">00:00:00</div>
+                </div>
+                <div>
+                    <div class="end-title">End</div>
+                    <div class="end">00:00:00</div>   
+                </div>
+            </div>
+            <div class="flex-center">
+                <div>
+                    <div>Date</div>
+                    <div class="date">11/12/2023</div>
+                </div>
+            </div>
+            <div class="edit-buttons flex-center">
+                <img src="../assets/images/delete-button.svg" alt="delete-button" id="delete-button" width="20px">
+                <img src="../assets/images/edit.png" alt="edit" id="edit-button" width="20px">
+            </div>
+        </div>
+    </section>
+
+    <!-- Running timer and add time entries -->
+    <section id="timer-container" class="block-style">
+        <h3 class="flex-center">Timer</h3>
+        <div id="timer" class="timer flex-center">00:00:00</div>
+        <div id="timer-options" class="timer-options flex-center">
+            <img src="../assets/images/start.png" alt="start" id="start-timer" width="30px">
+            <img src="../assets/images/pause.png" alt="pause" id="pause-timer" width="30px">
+            <img src="../assets/images/stop.png" alt="stop" id="stop-timer" width="30px">
+        </div>
+        <div class="add-entry">
+            <div id="add-details" class="flex-center button">ADD DETAILS</div>
+            <div id="add-manual-entry" class="flex-center button">ADD A MANUAL ENTRY</div>
+        </div>
+    </section>
+
+    <!-- Analysis  -->
+    <section id="analysis-container" class="block-style">
+        <h3 class="flex-center">Analysis</h3>
+    </section>
+</body>
+</html>
