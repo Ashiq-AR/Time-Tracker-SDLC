@@ -4,6 +4,7 @@ const loginSignupHandlers = require('./server-side-scripts/login-signup-handlers
 const addEntryHandlers = require('./server-side-scripts/add-entry-handlers.cjs')
 const updateEntryHandlers = require('./server-side-scripts/update-entry-handlers.cjs')
 const filterEntryHandlers = require('./server-side-scripts/filter-entry-handlers.cjs')
+const editAndDeleteEntryHandlers = require('./server-side-scripts/edit&delete-entry-handlers.cjs')
 
 const app = express()
 const port = 3000
@@ -133,6 +134,33 @@ app.post('/get-by-month', async (req,res)=>{
     let filteredEntries = await filterEntryHandlers.getEntriesForMonth(query)
     if(filteredEntries == undefined) filteredEntries = 'not found'
     res.status(200).json(filteredEntries)
+})
+
+/**
+ * Handle requests to delete an entry in file
+ */
+app.post('/delete-entry', (req,res)=>{
+    const query = req.body
+    editAndDeleteEntryHandlers.deleteEntry(query)    
+    res.status(200).send('successfull')
+})
+
+/**
+ * Handle requests to edit an entry in file
+ */
+app.post('/edit-entry', (req,res)=>{
+    const query = req.body
+    const timeEntry = filterEntryHandlers.fetchAnEntry(query)
+    res.status(200).json(timeEntry)
+})
+
+/**
+ * Handle requests to clear time stamps of a entry in file
+ */
+app.post('/clear-time-stamps',(req,res)=>{
+    const query = req.body
+    editAndDeleteEntryHandlers.clearTimeStamps(query)
+    res.status(200).send('successfull')
 })
 
 /**

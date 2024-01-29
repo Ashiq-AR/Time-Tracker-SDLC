@@ -1,6 +1,7 @@
 import * as domUtils from '../utils/dom-utils.js'
 import * as timerHandlers from './timer-handlers.js'
 import * as unitFunctions from './unit-functions.js'
+import * as editAndDeleteEntryHandlers from './edit&delete-entry-handlers.js'
 
 /**
  * Show the popup for given html template
@@ -106,36 +107,39 @@ export const displayDetailsForm = function(){
  */
 export const addEntryInUi = function (taskName,taskDescription,category,duration,start,end,date){
     let entry = document.createElement('div')
+    entry.classList.add("time-entry")
+    entry.classList.add("block-style")
     entry.innerHTML = `
-    <div class="time-entry block-style">
-            <h3 class="task-name">${unitFunctions.capitalize(taskName)}</h3>
-            <h3 class="category-title">Category</h3>
-            <h3 class="total-duration-title">Duration</h3>
-            <div class="task-description hide-scrollbar">${unitFunctions.capitalize(taskDescription)}</div>
-            <div class="category">${unitFunctions.capitalize(category)}</div>
-            <div class="total-duration flex-center">${duration}</div>
-            <div class="start-and-end flex-center">
-                <div>
-                    <div class="start-title">Start</div>
-                    <div class="start">${start}</div>
-                </div>
-                <div>
-                    <div class="end-title">End</div>
-                    <div class="end">${end}</div>   
-                </div>
+        <h3 class="task-name">${unitFunctions.capitalize(taskName)}</h3>
+        <h3 class="category-title">Category</h3>
+        <h3 class="total-duration-title">Duration</h3>
+        <div class="task-description hide-scrollbar">${unitFunctions.capitalize(taskDescription)}</div>
+        <div class="category">${unitFunctions.capitalize(category)}</div>
+        <div class="total-duration flex-center">${duration}</div>
+        <div class="start-and-end flex-center">
+            <div>
+                <div class="start-title">Start</div>
+                <div class="start">${start}</div>
             </div>
-            <div class="flex-center">
-                <div>
-                    <div>Date</div>
-                    <div class="date">${date}</div>
-                </div>
+            <div>
+                <div class="end-title">End</div>
+                <div class="end">${end}</div>   
             </div>
-            <div class="edit-buttons flex-center">
-                <img src="../assets/images/delete-button.svg" alt="delete-button" id="delete-button" width="20px">
-                <img src="../assets/images/edit.png" alt="edit" id="edit-button" width="20px">
+        </div>
+        <div class="flex-center">
+            <div>
+                <div>Date</div>
+                <div class="date">${date}</div>
             </div>
+        </div>
+        <div class="edit-buttons flex-center">
+            <img src="../assets/images/delete-button.svg" alt="delete-button" class="delete-button" width="20px">
+            <img src="../assets/images/edit.png" alt="edit" class="edit-button" width="20px">
         </div>`
-        domUtils.timeEntriesContainer.append(entry)
+    domUtils.timeEntriesContainer.append(entry)
+    if(typeof this == 'string') unitFunctions.getLastElementOfAnIterator(document.getElementsByClassName('time-entry')).id = this
+    editAndDeleteEntryHandlers.addListener(date,'delete')
+    editAndDeleteEntryHandlers.addListener(date,'edit')
 }
 
 /**
@@ -319,7 +323,7 @@ export const showTimeEntries = async function(filteredEntries,entry,date){
     const startTime = filteredEntries[entry].startTime || '--'
     const stopTime = filteredEntries[entry].stopTime || '--'
     date = date || '--'
-    addEntryInUi(taskName,taskDescription,category,duration,startTime,stopTime,date)
+    addEntryInUi.call(entry,taskName,taskDescription,category,duration,startTime,stopTime,date)
 }
 
 /**
@@ -349,4 +353,18 @@ export const displayTimeEntriesNotFound = function(){
         <img src="../assets/images/none.png" alt="none" width="50px">
         <div>No Entries Found</div>
     </div>`
+}
+
+/**
+ * Create or delete a time stamp in manual entry form UI
+ */
+export const timeStampLogicInManualEntry = function(){
+    document.getElementById('add-time-stamp').onclick = function(){
+        addTimeStampInUiForm()
+        for(const deleteTimeStamp of document.getElementsByClassName("delete-time-stamp")){
+            deleteTimeStamp.onclick = function(event){
+                deleteElementInUi(event.target.parentNode)
+            }
+        }
+    }
 }

@@ -1,6 +1,7 @@
 import { getEmailOfUser } from "./user-handlers.js"
 import * as domUtils from '../utils/dom-utils.js'
 
+export let notFound = true
 let filteredEntries
 
 /**
@@ -33,10 +34,13 @@ export const getEntries = async function(getBy,inputValue){
  */
 export const filterByCategory = function(filterBy){
     if(filterBy == 'all'){
+        if(Object.keys(filteredEntries).length == 0){
+            notFound = false
+            return 'not found'
+        }
         return filteredEntries
     }
     const filter = domUtils.filterByCalendar.value
-    let notFound = true
     if(filter == 'date'){
         for(const entryId in filteredEntries){
             if(!(filteredEntries[entryId].category == filterBy)){
@@ -44,7 +48,7 @@ export const filterByCategory = function(filterBy){
                 if(notFound) notFound = true
             }
             else{
-                 notFound = false
+                notFound = false
             }
         }
     }

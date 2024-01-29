@@ -1,3 +1,10 @@
+import * as updateEntryHandlers from './update-entry-handlers.js'
+import * as timeHandlers from './time-handlers.js'
+import * as uiManipulators from './ui-manipulators.js'
+import * as unitFunctions from './unit-functions.js'
+import {getEmailOfUser} from './user-handlers.js';
+import { clearTimeStampsInFile } from './edit&delete-entry-handlers.js';
+
 /**
  * Returns the task details entered
  * @returns The selected details from the task input as an object
@@ -104,4 +111,91 @@ export const addTimeStamp = async function (entryDetails,timeStamp,time){
         body : JSON.stringify(entryDetails)
     })
     return response
+}
+
+/**
+ * Execute function when submit in manual entry form is clicked
+ * @param {HTMLElement} form - the form element in UI
+ * @param {string} edit - the string representing edit value
+ * @param {string} entryId - the uid of the time entry
+ * @param {HTMLElement} deleteElement - the delete button element
+ */
+export const submitLogicInManualEntry = function(form,edit,entryId,deleteElement){
+    document.getElementById("submit-details").onclick = async function(){
+        let entryDetails,startTime,stopTime,duration,isStartTimeLess = true,isEdit = false
+        if(edit) if(edit == 'edit') isEdit = true
+        const details = getDetails()
+        let fullDate
+        if(document.getElementById("date").value == ''){
+            let dateObj = new Date()
+            fullDate = unitFunctions.formatDate(dateObj.getDate(),parseInt(dateObj.getMonth())+1,dateObj.getFullYear()).split('/')
+            fullDate.reverse()
+        }
+        else {
+            fullDate = document.getElementById("date").value.split('-')
+        }
+        startTime = timeHandlers.getFormatedTimeFromManualEntryForm("start-time")
+        stopTime = timeHandlers.getFormatedTimeFromManualEntryForm("stop-time")
+        if(unitFunctions.validateGreaterTime(timeHandlers.separateHrsMinsSecsFromFormatedTime(startTime),timeHandlers.separateHrsMinsSecsFromFormatedTime(stopTime))){
+            const numberOfTimeStamps = document.getElementById('time-stamps-container').children.length
+            for(let i=0;i<numberOfTimeStamps;i++){
+                let hours = document.getElementsByClassName('start-time-stamp-hours')[i].value
+                let minutes = document.getElementsByClassName('start-time-stamp-minutes')[i].value
+                let seconds = document.getElementsByClassName('start-time-stamp-seconds')[i].value
+                let meridiam = document.getElementsByClassName('start-time-stamp-meridiam')[i].value
+                let startTimeStamp = unitFunctions.formatTime(hours,minutes,seconds,meridiam)
+                hours = document.getElementsByClassName('stop-time-stamp-hours')[i].value
+                minutes = document.getElementsByClassName('stop-time-stamp-minutes')[i].value
+                seconds = document.getElementsByClassName('stop-time-stamp-seconds')[i].value
+                meridiam = document.getElementsByClassName('stop-time-stamp-meridiam')[i].value
+                let stopTimeStamp = unitFunctions.formatTime(hours,minutes,seconds,meridiam)
+                if(unitFunctions.validateGreaterTime(timeHandlers.separateHrsMinsSecsFromFormatedTime(startTimeStamp),timeHandlers.separateHrsMinsSecsFromFormatedTime(stopTimeStamp))){
+                    isStartTimeLess = true
+                }
+                else{
+                    alert("Make sure start time is less than end time in all time stamps")
+                    isStartTimeLess = false
+                    break
+                }
+            }
+            if(isStartTimeLess){
+                details["email"] = getEmailOfUser()
+                details["date"] = fullDate[2]
+                details["month"] = fullDate[1]
+                details["year"] = fullDate[0]
+                if(isEdit) details['id'] = entryId
+                entryDetails = await addEntryDetailsInFile(details)
+                duration = timeHandlers.calculateDurationFromStartEndTime(startTime,stopTime)
+                await updateEntryHandlers.updateDetail("duration",entryDetails,duration)
+                await addStartTimeForEntry(entryDetails,startTime)
+                await addStopTimeForEntry(entryDetails,stopTime)
+                const response = await clearTimeStampsInFile(entryDetails)
+                if(response.ok){
+                    for(let i=0;i<numberOfTimeStamps;i++){
+                        let hours = document.getElementsByClassName('start-time-stamp-hours')[i].value
+                        let minutes = document.getElementsByClassName('start-time-stamp-minutes')[i].value
+                        let seconds = document.getElementsByClassName('start-time-stamp-seconds')[i].value
+                        let meridiam = document.getElementsByClassName('start-time-stamp-meridiam')[i].value
+                        let startTimeStamp = unitFunctions.formatTime(hours,minutes,seconds,meridiam)
+                        hours = document.getElementsByClassName('stop-time-stamp-hours')[i].value
+                        minutes = document.getElementsByClassName('stop-time-stamp-minutes')[i].value
+                        seconds = document.getElementsByClassName('stop-time-stamp-seconds')[i].value
+                        meridiam = document.getElementsByClassName('stop-time-stamp-meridiam')[i].value
+                        let stopTimeStamp = unitFunctions.formatTime(hours,minutes,seconds,meridiam)
+                        await addTimeStamp(entryDetails,"start",startTimeStamp)
+                        await addTimeStamp(entryDetails,"end",stopTimeStamp)
+                    }
+                }
+                if(isEdit) document.getElementsByClassName('delete-button')[0].onclick.call(deleteElement,'edit')
+                if(timeHandlers.checkIfToAddCurrentEntryInUi(details['date']) || timeHandlers.checkIfToAddCurrentEntryInUi(details['month'])) {
+                    uiManipulators.addEntryInUi.call(entryDetails.id,details.taskName || '--',details.taskDescription || '--',details.category || '--',duration || "--:--:--",startTime || "--:--:--",stopTime || "--:--:--",unitFunctions.formatDate(details["date"],details["month"],details["year"]))
+                }
+                uiManipulators.addTaskDescriptionPopUpOnClick()
+                uiManipulators.cancelPopup(form)
+            }
+        }
+        else{
+            alert('Please ensure start time is less than or equal to end time')
+        }
+    }
 }

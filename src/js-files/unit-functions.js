@@ -127,7 +127,8 @@ export const validateGreaterTime = function(startTime,endTime){
         for(let i=0;i<3;i++){
             if(start[i]<=end[i]){
                 if(start[i]==end[i]){
-                    continue
+                    if(i==2) return true
+                    else continue
                 }
                 else return true
             }

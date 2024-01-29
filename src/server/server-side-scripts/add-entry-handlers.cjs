@@ -23,6 +23,7 @@ const addEntryDetailsInFile = function(details){
     let timerEntriesData
     let promise = new Promise((resolve,reject)=>{
         fs.readFile(timeEntriesFilePath,(err,data)=>{
+            let uuid = uuidv4()
             try{
                 timerEntriesData = JSON.parse(data)
             }
@@ -43,12 +44,15 @@ const addEntryDetailsInFile = function(details){
             if(!timerEntriesData[query.email][query.year][query.month].hasOwnProperty(query.date)){
                 timerEntriesData[query.email][query.year][query.month][query.date] = {}
             }
-            let uuid = uuidv4()
-            timerEntriesData[query.email][query.year][query.month][query.date][uuid] = {}
-            timerEntriesData[query.email][query.year][query.month][query.date][uuid]["taskName"] = query.taskName
-            timerEntriesData[query.email][query.year][query.month][query.date][uuid]["taskDescription"] = query.taskDescription
-            timerEntriesData[query.email][query.year][query.month][query.date][uuid]["category"] = query.category
-            timerEntriesData[query.email][query.year][query.month][query.date][uuid]["duration"] = ""
+            if(!timerEntriesData[query.email][query.year][query.month][query.date].hasOwnProperty(query.id)){
+                // timerEntriesData[query.email][query.year][query.month][query.date][uuid] = {}
+                query.id = uuid
+                timerEntriesData[query.email][query.year][query.month][query.date][query.id] = {}
+            }
+            timerEntriesData[query.email][query.year][query.month][query.date][query.id]["taskName"] = query.taskName
+            timerEntriesData[query.email][query.year][query.month][query.date][query.id]["taskDescription"] = query.taskDescription
+            timerEntriesData[query.email][query.year][query.month][query.date][query.id]["category"] = query.category
+            timerEntriesData[query.email][query.year][query.month][query.date][query.id]["duration"] = ""
             fs.writeFile(timeEntriesFilePath, JSON.stringify(timerEntriesData) , (err)=>{
                 if(err) {
                     console.error("Couldn't write file in add entry");
@@ -60,7 +64,7 @@ const addEntryDetailsInFile = function(details){
             entryId["month"] = query.month
             entryId["year"] = query.year
             entryId["email"] = query.email
-            entryId["id"] = uuid
+            entryId["id"] = query.id
             resolve(entryId)
         })
         

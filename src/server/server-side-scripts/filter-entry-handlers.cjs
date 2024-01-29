@@ -37,7 +37,23 @@ const getEntriesForMonth = function(entryParams){
     }
 }
 
+/**
+ * Fetch and returns a particular details of an entry
+ * @param {object} entryParams - the details of a time entry
+ * @returns the fetched entry else not found
+ */
+const fetchAnEntry = function(entryParams){
+    const timeEntries = JSON.parse(fs.readFileSync(timeEntriesFilePath))
+    try{
+        return timeEntries[entryParams.email][entryParams.year][entryParams.month][entryParams.date][entryParams.entryId]
+    }
+    catch(err){
+        return 'not found'
+    }
+}
+
 module.exports = {
     getEntriesForDate,
-    getEntriesForMonth
+    getEntriesForMonth,
+    fetchAnEntry
 }

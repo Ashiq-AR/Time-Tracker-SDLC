@@ -15,6 +15,19 @@ export const getFormatedTimeFromManualEntryForm = function(name){
 }
 
 /**
+ * Sets the form input field with the given time
+ * @param {string} name - the needed time
+ * @param {string} formatedTime - the stored readable formated time
+ */
+export const setTimeInManualEntryForm = function(name,formatedTime){
+    const time = separateHrsMinsSecsFromFormatedTime(formatedTime)
+    document.getElementById(name+"-hours").value = time.hrs
+    document.getElementById(name+"-minutes").value = time.mins
+    document.getElementById(name+"-seconds").value = time.secs
+    document.getElementById(name+"-meridiam").value = time.meridiam
+}
+
+/**
  * Returns the duration between start time and end time
  * @param {string} startTime - the start time of an entry
  * @param {string} endTime - the end time of an entry
